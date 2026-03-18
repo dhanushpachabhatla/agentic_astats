@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.pyc
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env.local
+
+# Environment variables (keep .env.example, ignore actual .env)
+.env
+.env.example
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# Project outputs (generated at runtime)
+outputs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.suo
+*.user
+
+# Logs
+*.log
+logs/
