@@ -1,0 +1,15 @@
+{
+    "dataset_summary": "This dataset contains information about student performance on a test. Each row represents a student from a school who took the test using one of two teaching methods. The target variable is the student's test score.",
+    "has_repeated_measures": false,
+    "has_independent_groups": true,
+    "has_binary_outcome": true,
+    "has_survival_data": false,
+    "is_hierarchical": true,
+    "identified_roles": {
+        "StudentID": "ID",
+        "SchoolID": "Grouping Variable",
+        "TeachingMethod": "Repeated Measure Timepoint",
+        "TestScore": "Continuous Target"
+    },
+    "inferred_structure_notes": "The data is hierarchical because it has a grouping variable (SchoolID) that groups the students into schools. Each school took the test using one of two teaching methods, which can be thought of as repeated measures within each school. The target variable (TestScore) is continuous and varies across all students."
+}

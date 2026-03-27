@@ -25,7 +25,6 @@ env/
 *.ipynb_checkpoints
 
 # Project outputs (generated at runtime)
-outputs/
 
 # OS files
 .DS_Store

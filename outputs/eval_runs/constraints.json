@@ -1,0 +1,33 @@
+{
+    "engine_type": "Deterministic Rule-Based Constraints",
+    "data_structure_read": {
+        "has_repeated_measures": false,
+        "has_independent_groups": true,
+        "has_binary_outcome": true,
+        "has_survival_data": false,
+        "is_hierarchical": true
+    },
+    "allowed_methods": [
+        "Independent / Two-Sample t-test",
+        "One-way ANOVA",
+        "Mann-Whitney U test",
+        "Independent group comparisons (e.g., test differences between groups)",
+        "Logistic Regression",
+        "Chi-Square Test (for categorical predictors)",
+        "Linear Mixed-Effects Models (LMM) / Hierarchical Linear Modeling (HLM)",
+        "Random Intercepts/Slopes Models"
+    ],
+    "forbidden_methods": [
+        "Repeated Measures ANOVA",
+        "Linear Mixed-Effects Models (LMM)",
+        "Paired / Dependent t-test",
+        "Wilcoxon signed-rank test",
+        "Ordinary Least Squares (OLS) Linear Regression",
+        "Standard OLS Linear Regression (ignoring nested structure)"
+    ],
+    "methodological_warnings": [
+        "Observations are assumed independent (Cross-sectional data).",
+        "CRITICAL: The target outcome is binary (0/1). OLS Linear Regression is FORBIDDEN. Use Logistic Regression.",
+        "CRITICAL: Data has hierarchical/nested structure. Observations are NOT independent. Use Mixed-Effects models."
+    ]
+}

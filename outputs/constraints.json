@@ -1,0 +1,23 @@
+{
+    "engine_type": "Deterministic Rule-Based Constraints",
+    "data_structure_read": {
+        "has_repeated_measures": false,
+        "has_independent_groups": true
+    },
+    "allowed_methods": [
+        "Ordinary Least Squares (OLS) Linear Regression",
+        "Independent / Two-Sample t-test",
+        "One-way ANOVA",
+        "Mann-Whitney U test",
+        "Independent group comparisons (e.g., test differences between groups)"
+    ],
+    "forbidden_methods": [
+        "Repeated Measures ANOVA",
+        "Linear Mixed-Effects Models (LMM)",
+        "Paired / Dependent t-test",
+        "Wilcoxon signed-rank test"
+    ],
+    "methodological_warnings": [
+        "Observations are assumed independent (Cross-sectional data)."
+    ]
+}

@@ -13,7 +13,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from agents import data_understanding_agent, planning_agent
+from agents import (
+    data_understanding_agent,
+    data_structure_agent,
+    statistical_constraint_agent,
+    planning_agent
+)
 from utils.file_utils import read_markdown, ensure_output_dir
 
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "outputs")
@@ -134,14 +139,31 @@ def main():
     print(SEPARATOR)
     profile_path = data_understanding_agent.run(csv_path, OUTPUT_DIR)
 
-    # Step 3: Planning Agent - Generate Plan
+    # Step 3: Data Structure Inference Module
     print(f"\n{SEPARATOR}")
-    print("[Agent 2] Planning Agent - generating analysis plan...")
+    print("[Agent 2] Data Structure Agent - inferring data generation process...")
+    print(SEPARATOR)
+    data_structure_path = data_structure_agent.run(csv_path, OUTPUT_DIR)
+
+    # Step 4: Statistical Constraint Engine
+    print(f"\n{SEPARATOR}")
+    print("[Agent 3] Statistical Constraint Engine - generating constraints...")
     print(SEPARATOR)
     profile_text = read_markdown(profile_path)
-    plan_path = planning_agent.generate_plan(profile_text, user_goal, OUTPUT_DIR)
+    with open(data_structure_path, "r", encoding="utf-8") as f:
+        data_structure_text = f.read()
+    constraints_path = statistical_constraint_agent.run(profile_text, data_structure_text, OUTPUT_DIR)
 
-    # Step 4 & 5: Human-in-the-loop review + refinement
+    # Step 5: Planning Agent - Generate Plan
+    print(f"\n{SEPARATOR}")
+    print("[Agent 4] Planning Agent - generating constraint-aware analysis plan...")
+    print(SEPARATOR)
+    with open(constraints_path, "r", encoding="utf-8") as f:
+        constraints_text = f.read()
+
+    plan_path = planning_agent.generate_plan(profile_text, data_structure_text, constraints_text, user_goal, OUTPUT_DIR)
+
+    # Step 6 & 7: Human-in-the-loop review + refinement
     print(f"\n{SEPARATOR}")
     print("[Human-in-the-Loop] Please review the generated analysis plan.")
     print(SEPARATOR)

@@ -38,7 +38,7 @@ def _call_gemini(prompt: str) -> str:
     raise RuntimeError(f"All Gemini API keys failed. Last error: {last_error}")
 
 
-def _generate_plan_prompt(profile_text: str, user_goal: str) -> str:
+def _generate_plan_prompt(profile_text: str, data_structure_text: str, constraint_text: str, user_goal: str) -> str:
     return f"""You are an expert data scientist and analysis planner.
 
 User Goal: {user_goal}
@@ -47,7 +47,15 @@ User Goal: {user_goal}
 {profile_text}
 --- END PROFILE ---
 
-Based on the user's goal and dataset profile above, create a structured analysis plan.
+--- DATA STRUCTURE EXPECTATIONS ---
+{data_structure_text}
+--- END DATA STRUCTURE ---
+
+--- STATISTICAL CONSTRAINTS ---
+{constraint_text}
+--- END CONSTRAINTS ---
+
+Based on the user's goal, the dataset profile, the inferred data structure, and the STRICT statistical constraints above, create a structured analysis plan.
 
 Output this as a markdown file called analysis_plan.md. Structure it as follows:
 
@@ -107,16 +115,16 @@ Output the complete updated analysis_plan.md.
 """
 
 
-def generate_plan(profile_text: str, user_goal: str, output_dir: str) -> str:
+def generate_plan(profile_text: str, data_structure_text: str, constraints_text: str, user_goal: str, output_dir: str) -> str:
     """
-    Generate an initial analysis plan from the dataset profile and user goal.
+    Generate an initial analysis plan from the dataset profile, structure, constraints, and user goal.
 
     Returns
     -------
     str : path to the written analysis_plan.md
     """
     print("\n[PlanningAgent] Generating analysis plan with Gemini...")
-    prompt = _generate_plan_prompt(profile_text, user_goal)
+    prompt = _generate_plan_prompt(profile_text, data_structure_text, constraints_text, user_goal)
     plan_md = _call_gemini(prompt)
 
     plan_path = os.path.join(output_dir, "analysis_plan.md")
