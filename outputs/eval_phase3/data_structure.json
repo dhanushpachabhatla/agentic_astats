@@ -1,0 +1,50 @@
+{
+    "dataset_summary": "The dataset contains information about participants' income and outcome score.",
+    "has_repeated_measures": false,
+    "has_independent_groups": true,
+    "has_binary_outcome": false,
+    "has_survival_data": false,
+    "is_hierarchical": false,
+    "identified_roles": {
+        "ParticipantNumber": "ID",
+        "RiskBand": "Grouping Variable",
+        "Income": "Continuous Target",
+        "OutcomeScore": "Continuous Target"
+    },
+    "inferred_structure_notes": "The dataset has independent groups and no repeated measures or survival data. The 'ParticipantNumber' column serves as the unique identifier for each participant, while the 'RiskBand' column is used to group participants into different risk bands. Both 'Income' and 'OutcomeScore' are continuous target variables.",
+    "has_multiclass_nominal_outcome": false,
+    "primary_outcome_column": "OutcomeScore",
+    "primary_outcome_type": "continuous",
+    "assumption_tests": {
+        "normality_violations": [],
+        "homoscedasticity_violated": false,
+        "multicollinearity_detected": false,
+        "high_vif_columns": [],
+        "is_small_sample": false,
+        "has_ordinal_outcome": false,
+        "ordinal_columns": [],
+        "has_multiclass_nominal_outcome": false,
+        "multiclass_outcome_columns": [],
+        "has_zero_inflation": false,
+        "zero_inflated_columns": [],
+        "has_overdispersed_counts": false,
+        "overdispersed_columns": [],
+        "has_sparse_contingency": false,
+        "sparse_contingency_tables": [],
+        "has_proportion_outcome": false,
+        "proportion_columns": [],
+        "has_time_series": false,
+        "time_series_columns": [],
+        "has_perfect_separation": false,
+        "perfect_separation_columns": [],
+        "structured_missingness": true,
+        "structured_missingness_columns": [
+            {
+                "column": "Income",
+                "grouping_column": "RiskBand",
+                "missing_rate_range": 0.582
+            }
+        ],
+        "sample_size": 240
+    }
+}

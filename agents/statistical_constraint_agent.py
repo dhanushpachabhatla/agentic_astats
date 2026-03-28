@@ -30,6 +30,7 @@ def run(profile_text: str, data_structure_text: str, output_dir: str) -> str:
 
     has_repeated = structure.get("has_repeated_measures", False)
     has_indep = structure.get("has_independent_groups", False)
+    has_multiclass = structure.get("has_multiclass_nominal_outcome", False)
 
     allowed = []
     forbidden = []
@@ -84,6 +85,14 @@ def run(profile_text: str, data_structure_text: str, output_dir: str) -> str:
         allowed.append("Logistic Regression")
         allowed.append("Chi-Square Test (for categorical predictors)")
         warnings.append("CRITICAL: The target outcome is binary (0/1). OLS Linear Regression is FORBIDDEN. Use Logistic Regression.")
+
+    # RULE 3B: Multiclass Nominal Outcome
+    if has_multiclass:
+        allowed = [m for m in allowed if "OLS" not in m and "Ordinary Least Squares" not in m]
+        forbidden.append("Ordinary Least Squares (OLS) Linear Regression")
+        allowed.append("Multinomial Logistic Regression")
+        allowed.append("Softmax / Multiclass Classification Models")
+        warnings.append("CRITICAL: The target outcome has 3+ unordered classes. Do not use OLS. Use multinomial logistic or another multiclass classification model.")
 
     # RULE 4: Survival / Time-to-Event Data
     has_survival = structure.get("has_survival_data", False)
@@ -144,6 +153,13 @@ def run(profile_text: str, data_structure_text: str, output_dir: str) -> str:
         allowed.append("Exact / Non-parametric alternatives")
         warnings.append(f"CRITICAL: Sample size is very small (n={n}). The Central Limit Theorem may not apply. Use exact tests (Fisher's, permutation) instead of asymptotic tests (chi-square, z-test). Interpret all p-values with caution.")
 
+    # RULE 9B: Sparse contingency tables
+    if assumptions.get("has_sparse_contingency"):
+        sparse_tables = assumptions.get("sparse_contingency_tables", [])
+        forbidden.append("Chi-Square Test (sparse contingency tables)")
+        allowed.append("Fisher's Exact Test")
+        warnings.append(f"CRITICAL: Sparse contingency tables detected in {sparse_tables}. Chi-square assumptions are weak here; prefer Fisher's Exact Test or exact resampling methods.")
+
     # RULE 10: Ordinal Outcome
     if assumptions.get("has_ordinal_outcome"):
         ordinal_cols = assumptions.get("ordinal_columns", [])
@@ -166,6 +182,45 @@ def run(profile_text: str, data_structure_text: str, output_dir: str) -> str:
         allowed.append("Hurdle Model")
         warnings.append(f"CRITICAL: Zero-inflated count data detected in {zi_cols}. Standard Poisson underestimates variance. Use Zero-Inflated Poisson/Negative Binomial or Hurdle models.")
 
+    # RULE 12: Overdispersed counts without strong zero inflation
+    if assumptions.get("has_overdispersed_counts"):
+        od_cols = assumptions.get("overdispersed_columns", [])
+        forbidden.append("Standard Poisson Regression (overdispersion violates equidispersion)")
+        allowed.append("Negative Binomial Regression")
+        warnings.append(f"CRITICAL: Overdispersed count outcomes detected in {od_cols}. Standard Poisson is too restrictive; prefer Negative Binomial models.")
+
+    # RULE 13: Proportion outcome
+    if assumptions.get("has_proportion_outcome"):
+        prop_cols = assumptions.get("proportion_columns", [])
+        allowed = [m for m in allowed if "OLS" not in m and "Ordinary Least Squares" not in m]
+        forbidden.append("OLS Linear Regression (ignores bounded proportion outcome)")
+        allowed.append("Beta Regression")
+        allowed.append("Fractional Logistic Regression")
+        warnings.append(f"CRITICAL: Proportion outcome detected in {prop_cols}. Outcomes bounded in [0, 1] should use beta or fractional-response models instead of OLS.")
+
+    # RULE 14: Time series / serial dependence
+    if assumptions.get("has_time_series"):
+        ts_cols = assumptions.get("time_series_columns", [])
+        allowed = [m for m in allowed if "OLS" not in m and "Ordinary Least Squares" not in m]
+        forbidden.append("OLS Linear Regression (ignores serial dependence)")
+        allowed.append("ARIMA")
+        allowed.append("Autoregressive Regression")
+        warnings.append(f"CRITICAL: Serial dependence detected in {ts_cols}. Use time-series models such as ARIMA or autoregressive regression rather than plain OLS.")
+
+    # RULE 15: Perfect separation in binary classification
+    if assumptions.get("has_perfect_separation"):
+        sep_cols = assumptions.get("perfect_separation_columns", [])
+        allowed.append("Firth Penalized Logistic Regression")
+        allowed.append("Penalized Logistic Regression")
+        warnings.append(f"CRITICAL: Perfect or near-perfect separation detected using predictors {sep_cols}. Standard logistic regression coefficients may diverge; use Firth or penalized logistic models.")
+
+    # RULE 16: Structured missingness
+    if assumptions.get("structured_missingness"):
+        missing_cols = assumptions.get("structured_missingness_columns", [])
+        allowed.append("Multiple Imputation")
+        allowed.append("Missingness Diagnostics / Sensitivity Analysis")
+        warnings.append(f"WARNING: Missingness appears structured rather than random: {missing_cols}. Consider multiple imputation and sensitivity analysis instead of naive complete-case analysis.")
+
     # Remove duplicates but keep order stable
     allowed = list(dict.fromkeys(allowed))
     forbidden = list(dict.fromkeys(forbidden))
@@ -176,6 +231,7 @@ def run(profile_text: str, data_structure_text: str, output_dir: str) -> str:
             "has_repeated_measures": has_repeated,
             "has_independent_groups": has_indep,
             "has_binary_outcome": has_binary,
+            "has_multiclass_nominal_outcome": has_multiclass,
             "has_survival_data": has_survival,
             "is_hierarchical": is_hierarchical
         },
@@ -185,7 +241,13 @@ def run(profile_text: str, data_structure_text: str, output_dir: str) -> str:
             "multicollinearity_detected": assumptions.get("multicollinearity_detected", False),
             "small_sample": assumptions.get("is_small_sample", False),
             "ordinal_outcome": assumptions.get("has_ordinal_outcome", False),
-            "zero_inflated": assumptions.get("has_zero_inflation", False)
+            "zero_inflated": assumptions.get("has_zero_inflation", False),
+            "sparse_contingency": assumptions.get("has_sparse_contingency", False),
+            "overdispersed_counts": assumptions.get("has_overdispersed_counts", False),
+            "proportion_outcome": assumptions.get("has_proportion_outcome", False),
+            "time_series": assumptions.get("has_time_series", False),
+            "perfect_separation": assumptions.get("has_perfect_separation", False),
+            "structured_missingness": assumptions.get("structured_missingness", False)
         },
         "allowed_methods": allowed,
         "forbidden_methods": forbidden,

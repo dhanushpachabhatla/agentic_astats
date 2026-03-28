@@ -30,7 +30,8 @@ Astats preliminary work/
 │
 ├── evaluation_scripts/
 │   ├── evaluate_system.py                  # Phase 1: 5 structural edge cases
-│   └── evaluate_system_phase_2.py          # Phase 2: 5 assumption-based edge cases
+│   ├── evaluate_system_phase_2.py          # Phase 2: 5 assumption-based edge cases
+│   └── evaluate_system_phase_3.py          # Phase 3: 10 roadmap stress cases
 │
 ├── testing/
 │   ├── test_api.py                         # Gemini API key tester
@@ -159,6 +160,24 @@ Added deterministic tests that run before the constraint engine:
 | Ordinal Outcome (Likert 1-5) | `ordinal_outcome: true` | ✅ |
 | Zero-Inflated Counts (60% zeros) | `zero_inflated: true` | ✅ |
 
+### Phase 3 — Roadmap Stress Cases (10/10 SUPPORTED)
+
+Phase 3 extends AStats beyond the original structural and assumption checks into more brittle real-world scenarios.
+The suite reports whether each case is `SUPPORTED`, `PARTIAL`, or `GAP`. Current result: `10/10 SUPPORTED`.
+
+| Case | Detection / Constraint Outcome | Status |
+|------|--------------------------------|--------|
+| Multiclass Nominal Outcome | Detects unordered 3+ class target and allows Multinomial Logistic while forbidding OLS | ✅ |
+| Binary Predictor, Continuous Target | Avoids mistaking a binary predictor for a binary outcome and keeps OLS available | ✅ |
+| String-Coded Ordinal Outcome | Detects ordered text labels and recommends Ordinal Logistic while forbidding OLS | ✅ |
+| Sparse Subgroup Counts | Detects sparse contingency tables and recommends Fisher's Exact over Chi-Square | ✅ |
+| Overdispersed Counts | Detects overdispersion without zero-inflation and recommends Negative Binomial over Poisson | ✅ |
+| Proportion Outcome | Detects bounded [0,1] outcome and recommends Beta / fractional-response models over OLS | ✅ |
+| Hidden Hierarchy | Detects clustered data without explicit `*_id` naming and recommends Mixed-Effects models | ✅ |
+| Autocorrelated Time Series | Detects serial dependence and recommends ARIMA / autoregressive methods over OLS | ✅ |
+| Perfect Separation | Detects separation risk in binary classification and recommends Firth / penalized logistic regression | ✅ |
+| Group-Dependent Missingness | Detects structured missingness and recommends Multiple Imputation / sensitivity analysis | ✅ |
+
 ## Quick Start
 
 ### Prerequisites
@@ -171,6 +190,13 @@ Added deterministic tests that run before the constraint engine:
 
 ```bash
 pip install -r requirements.txt
+```
+
+Optional configuration:
+
+```bash
+# Planning backend options: gemini, local, auto
+PLANNING_BACKEND=gemini
 ```
 
 ### Run
@@ -187,6 +213,9 @@ python evaluation_scripts/evaluate_system.py
 
 # Phase 2: Assumption-based edge cases
 python evaluation_scripts/evaluate_system_phase_2.py
+
+# Phase 3: Roadmap stress cases
+python evaluation_scripts/evaluate_system_phase_3.py
 ```
 
 ## Environment

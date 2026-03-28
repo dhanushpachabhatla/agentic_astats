@@ -1,0 +1,44 @@
+{
+    "engine_type": "Deterministic Rule-Based Constraints",
+    "data_structure_read": {
+        "has_repeated_measures": false,
+        "has_independent_groups": true,
+        "has_binary_outcome": false,
+        "has_multiclass_nominal_outcome": false,
+        "has_survival_data": false,
+        "is_hierarchical": false
+    },
+    "assumption_tests_read": {
+        "normality_violated": false,
+        "homoscedasticity_violated": false,
+        "multicollinearity_detected": false,
+        "small_sample": false,
+        "ordinal_outcome": false,
+        "zero_inflated": false,
+        "sparse_contingency": false,
+        "overdispersed_counts": false,
+        "proportion_outcome": false,
+        "time_series": false,
+        "perfect_separation": false,
+        "structured_missingness": true
+    },
+    "allowed_methods": [
+        "Ordinary Least Squares (OLS) Linear Regression",
+        "Independent / Two-Sample t-test",
+        "One-way ANOVA",
+        "Mann-Whitney U test",
+        "Independent group comparisons (e.g., test differences between groups)",
+        "Multiple Imputation",
+        "Missingness Diagnostics / Sensitivity Analysis"
+    ],
+    "forbidden_methods": [
+        "Repeated Measures ANOVA",
+        "Linear Mixed-Effects Models (LMM)",
+        "Paired / Dependent t-test",
+        "Wilcoxon signed-rank test"
+    ],
+    "methodological_warnings": [
+        "Observations are assumed independent (Cross-sectional data).",
+        "WARNING: Missingness appears structured rather than random: [{'column': 'Income', 'grouping_column': 'RiskBand', 'missing_rate_range': 0.582}]. Consider multiple imputation and sensitivity analysis instead of naive complete-case analysis."
+    ]
+}

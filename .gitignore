@@ -40,3 +40,8 @@ desktop.ini
 # Logs
 *.log
 logs/
+
+
+#data
+sample_data/
+

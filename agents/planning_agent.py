@@ -4,6 +4,7 @@ Uses Gemini API with key rotation across GEMINI_API_KEY20 / GEMINI_KEY1/2/3.
 """
 import os
 from google import genai
+from openai import OpenAI
 
 from utils.file_utils import write_markdown
 
@@ -17,6 +18,31 @@ _GEMINI_KEYS = [
 ]
 
 _MODEL = "gemini-2.5-flash"
+_PLANNING_BACKEND = os.getenv("PLANNING_BACKEND", "gemini").strip().lower()
+
+# Local LM Studio client - mirrors the other local agents
+_LOCAL_CLIENT = OpenAI(base_url="http://localhost:1234/v1", api_key="lm-studio")
+_LOCAL_MODEL = "local-model"
+
+
+def _call_local_llm(prompt: str) -> str:
+    """Send prompt to local LM Studio server."""
+    try:
+        response = _LOCAL_CLIENT.chat.completions.create(
+            model=_LOCAL_MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an expert statistical analysis planner. Follow the provided statistical constraints strictly and produce clear markdown."
+                },
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.3,
+            max_tokens=2500
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        raise RuntimeError(f"Failed to call local LM Studio API for planning: {e}. Is a model loaded on port 1234?")
 
 
 def _call_gemini(prompt: str) -> str:
@@ -36,6 +62,26 @@ def _call_gemini(prompt: str) -> str:
             last_error = e
             print(f"[planning_agent] Key failed, trying next... ({e})")
     raise RuntimeError(f"All Gemini API keys failed. Last error: {last_error}")
+
+
+def _call_planner(prompt: str) -> str:
+    """
+    Route planning calls through the configured backend.
+
+    Supported values:
+      - gemini: use Gemini only
+      - local: use LM Studio only
+      - auto: try LM Studio first, then fall back to Gemini
+    """
+    if _PLANNING_BACKEND == "local":
+        return _call_local_llm(prompt)
+    if _PLANNING_BACKEND == "auto":
+        try:
+            return _call_local_llm(prompt)
+        except Exception as e:
+            print(f"[planning_agent] Local planning failed, falling back to Gemini... ({e})")
+            return _call_gemini(prompt)
+    return _call_gemini(prompt)
 
 
 def _generate_plan_prompt(profile_text: str, data_structure_text: str, constraint_text: str, user_goal: str) -> str:
@@ -123,9 +169,9 @@ def generate_plan(profile_text: str, data_structure_text: str, constraints_text:
     -------
     str : path to the written analysis_plan.md
     """
-    print("\n[PlanningAgent] Generating analysis plan with Gemini...")
+    print(f"\n[PlanningAgent] Generating analysis plan with backend: {_PLANNING_BACKEND}...")
     prompt = _generate_plan_prompt(profile_text, data_structure_text, constraints_text, user_goal)
-    plan_md = _call_gemini(prompt)
+    plan_md = _call_planner(prompt)
 
     plan_path = os.path.join(output_dir, "analysis_plan.md")
     write_markdown(plan_path, plan_md)
@@ -141,9 +187,9 @@ def refine_plan(current_plan_text: str, feedback: str, output_dir: str) -> str:
     -------
     str : path to the updated analysis_plan.md
     """
-    print("\n[PlanningAgent] Refining plan based on feedback...")
+    print(f"\n[PlanningAgent] Refining plan with backend: {_PLANNING_BACKEND}...")
     prompt = _refine_plan_prompt(current_plan_text, feedback)
-    updated_plan_md = _call_gemini(prompt)
+    updated_plan_md = _call_planner(prompt)
 
     plan_path = os.path.join(output_dir, "analysis_plan.md")
     write_markdown(plan_path, updated_plan_md)

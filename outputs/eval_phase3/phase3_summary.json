@@ -1,0 +1,551 @@
+[
+    {
+        "name": "P3-1: Multiclass Nominal Outcome",
+        "status": "SUPPORTED",
+        "future_need": "Support multinomial classification and forbid treating unordered multiclass targets as OLS regression problems.",
+        "checks": [
+            {
+                "label": "flag `ordinal_outcome` should stay false",
+                "passed": true
+            },
+            {
+                "label": "flag `has_binary_outcome` should stay false",
+                "passed": true
+            },
+            {
+                "label": "allowed methods should include `Multinomial Logistic`",
+                "passed": true
+            },
+            {
+                "label": "forbidden methods should include `OLS`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": false,
+            "has_binary_outcome": false,
+            "has_multiclass_nominal_outcome": true,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": true,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": false,
+            "proportion_outcome": false,
+            "time_series": false,
+            "perfect_separation": false,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Multinomial Logistic Regression",
+            "Softmax / Multiclass Classification Models",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test",
+            "Ordinary Least Squares (OLS) Linear Regression"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_1_multiclass_nominal.csv"
+    },
+    {
+        "name": "P3-2: Binary Predictor with Continuous Outcome",
+        "status": "SUPPORTED",
+        "future_need": "Do not confuse a binary predictor with a binary target.",
+        "checks": [
+            {
+                "label": "flag `has_binary_outcome` should stay false",
+                "passed": true
+            },
+            {
+                "label": "allowed methods should include `OLS`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": true,
+            "has_binary_outcome": false,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": true,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": false,
+            "proportion_outcome": false,
+            "time_series": false,
+            "perfect_separation": false,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Ordinary Least Squares (OLS) Linear Regression",
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Independent group comparisons (e.g., test differences between groups)",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_2_binary_predictor_continuous_target.csv"
+    },
+    {
+        "name": "P3-3: String-Coded Ordinal Outcome",
+        "status": "SUPPORTED",
+        "future_need": "Map ordered string labels to ordinal modeling choices.",
+        "checks": [
+            {
+                "label": "flag `ordinal_outcome` should be true",
+                "passed": true
+            },
+            {
+                "label": "allowed methods should include `Ordinal Logistic`",
+                "passed": true
+            },
+            {
+                "label": "forbidden methods should include `OLS`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": false,
+            "has_binary_outcome": false,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": true,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": true,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": false,
+            "proportion_outcome": false,
+            "time_series": false,
+            "perfect_separation": false,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests",
+            "Ordinal Logistic Regression (Proportional Odds Model)",
+            "Kruskal-Wallis Test (non-parametric comparison)",
+            "Spearman Rank Correlation"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test",
+            "OLS Linear Regression (treats ordinal as continuous)",
+            "Standard Logistic Regression (treats ordinal as binary)"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_3_string_ordinal.csv"
+    },
+    {
+        "name": "P3-4: Sparse Subgroup Counts",
+        "status": "SUPPORTED",
+        "future_need": "Look beyond global n and catch sparse contingency tables where Fisher's Exact is safer than chi-square.",
+        "checks": [
+            {
+                "label": "allowed methods should include `Fisher`",
+                "passed": true
+            },
+            {
+                "label": "forbidden methods should include `Chi-Square`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": true,
+            "has_binary_outcome": true,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": true,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": true,
+            "overdispersed_counts": false,
+            "proportion_outcome": false,
+            "time_series": false,
+            "perfect_separation": false,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Independent group comparisons (e.g., test differences between groups)",
+            "Logistic Regression",
+            "Chi-Square Test (for categorical predictors)",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests",
+            "Fisher's Exact Test"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test",
+            "Ordinary Least Squares (OLS) Linear Regression",
+            "Chi-Square Test (sparse contingency tables)"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_4_sparse_subgroup_counts.csv"
+    },
+    {
+        "name": "P3-5: Overdispersed Counts without Zero Inflation",
+        "status": "SUPPORTED",
+        "future_need": "Differentiate overdispersion from zero inflation and surface Negative Binomial models.",
+        "checks": [
+            {
+                "label": "flag `zero_inflated` should stay false",
+                "passed": true
+            },
+            {
+                "label": "allowed methods should include `Negative Binomial`",
+                "passed": true
+            },
+            {
+                "label": "forbidden methods should include `Poisson`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": false,
+            "has_binary_outcome": false,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": true,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": true,
+            "proportion_outcome": false,
+            "time_series": false,
+            "perfect_separation": false,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Ordinary Least Squares (OLS) Linear Regression",
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests",
+            "Negative Binomial Regression"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test",
+            "Standard Poisson Regression (overdispersion violates equidispersion)"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_5_overdispersed_counts.csv"
+    },
+    {
+        "name": "P3-6: Proportion Outcome",
+        "status": "SUPPORTED",
+        "future_need": "Route bounded [0,1] outcomes to beta/binomial-style methods instead of plain linear regression.",
+        "checks": [
+            {
+                "label": "allowed methods should include `Beta Regression`",
+                "passed": true
+            },
+            {
+                "label": "forbidden methods should include `OLS`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": false,
+            "has_binary_outcome": false,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": true,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": false,
+            "proportion_outcome": true,
+            "time_series": false,
+            "perfect_separation": false,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests",
+            "Beta Regression",
+            "Fractional Logistic Regression"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test",
+            "OLS Linear Regression (ignores bounded proportion outcome)"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_6_proportion_outcome.csv"
+    },
+    {
+        "name": "P3-7: Hidden Hierarchy without ID Keywords",
+        "status": "SUPPORTED",
+        "future_need": "Detect clustered or nested data even when columns are named Campus/Classroom instead of *_id.",
+        "checks": [
+            {
+                "label": "flag `is_hierarchical` should be true",
+                "passed": true
+            },
+            {
+                "label": "allowed methods should include `Mixed-Effects`",
+                "passed": true
+            },
+            {
+                "label": "forbidden methods should include `OLS`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": true,
+            "has_binary_outcome": false,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": true,
+            "normality_violated": true,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": false,
+            "proportion_outcome": false,
+            "time_series": false,
+            "perfect_separation": false,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Independent group comparisons (e.g., test differences between groups)",
+            "Linear Mixed-Effects Models (LMM) / Hierarchical Linear Modeling (HLM)",
+            "Random Intercepts/Slopes Models",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test",
+            "Standard OLS Linear Regression (ignoring nested structure)"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_7_hidden_hierarchy.csv"
+    },
+    {
+        "name": "P3-8: Autocorrelated Time Series",
+        "status": "SUPPORTED",
+        "future_need": "Detect serial dependence and route to time-series models such as ARIMA or autoregressive regression.",
+        "checks": [
+            {
+                "label": "allowed methods should include `ARIMA`",
+                "passed": true
+            },
+            {
+                "label": "forbidden methods should include `OLS`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": false,
+            "has_binary_outcome": false,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": true,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": false,
+            "proportion_outcome": false,
+            "time_series": true,
+            "perfect_separation": false,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests",
+            "ARIMA",
+            "Autoregressive Regression"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test",
+            "OLS Linear Regression (ignores serial dependence)"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_8_time_series.csv"
+    },
+    {
+        "name": "P3-9: Perfect Separation in Binary Outcome",
+        "status": "SUPPORTED",
+        "future_need": "Warn when logistic regression is unstable because a predictor almost perfectly separates the classes.",
+        "checks": [
+            {
+                "label": "flag `has_binary_outcome` should be true",
+                "passed": true
+            },
+            {
+                "label": "allowed methods should include `Firth`",
+                "passed": true
+            },
+            {
+                "label": "allowed methods should include `Penalized Logistic`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": true,
+            "has_binary_outcome": true,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": true,
+            "homoscedasticity_violated": true,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": false,
+            "proportion_outcome": false,
+            "time_series": false,
+            "perfect_separation": true,
+            "structured_missingness": false
+        },
+        "allowed_methods": [
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Independent group comparisons (e.g., test differences between groups)",
+            "Logistic Regression",
+            "Chi-Square Test (for categorical predictors)",
+            "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+            "Data Transformation (log, sqrt, Box-Cox) before parametric tests",
+            "Welch's t-test (does not assume equal variances)",
+            "Robust Standard Errors (HC3)",
+            "Firth Penalized Logistic Regression",
+            "Penalized Logistic Regression"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test",
+            "Ordinary Least Squares (OLS) Linear Regression"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_9_perfect_separation.csv"
+    },
+    {
+        "name": "P3-10: Group-Dependent Missingness",
+        "status": "SUPPORTED",
+        "future_need": "Recommend missing-data diagnostics or imputation when missingness is structured rather than random.",
+        "checks": [
+            {
+                "label": "allowed methods should include `Multiple Imputation`",
+                "passed": true
+            }
+        ],
+        "signals": {
+            "has_repeated_measures": false,
+            "has_independent_groups": true,
+            "has_binary_outcome": false,
+            "has_multiclass_nominal_outcome": false,
+            "has_survival_data": false,
+            "is_hierarchical": false,
+            "normality_violated": false,
+            "homoscedasticity_violated": false,
+            "multicollinearity_detected": false,
+            "small_sample": false,
+            "ordinal_outcome": false,
+            "zero_inflated": false,
+            "sparse_contingency": false,
+            "overdispersed_counts": false,
+            "proportion_outcome": false,
+            "time_series": false,
+            "perfect_separation": false,
+            "structured_missingness": true
+        },
+        "allowed_methods": [
+            "Ordinary Least Squares (OLS) Linear Regression",
+            "Independent / Two-Sample t-test",
+            "One-way ANOVA",
+            "Mann-Whitney U test",
+            "Independent group comparisons (e.g., test differences between groups)",
+            "Multiple Imputation",
+            "Missingness Diagnostics / Sensitivity Analysis"
+        ],
+        "forbidden_methods": [
+            "Repeated Measures ANOVA",
+            "Linear Mixed-Effects Models (LMM)",
+            "Paired / Dependent t-test",
+            "Wilcoxon signed-rank test"
+        ],
+        "dataset_path": "C:\\Users\\dhanu\\Desktop\\Astats preliminary work\\sample_data\\eval_datasets_p3\\p3_10_missingness_pattern.csv"
+    }
+]
