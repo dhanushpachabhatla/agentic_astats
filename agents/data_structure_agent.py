@@ -6,6 +6,7 @@ repeated measures, etc. Produces data_structure.json.
 import os
 import json
 import pandas as pd
+import numpy as np
 from openai import OpenAI
 
 from utils.file_utils import read_csv, ensure_output_dir
@@ -106,7 +107,11 @@ def _compute_assumption_tests(df: pd.DataFrame, heuristics: dict) -> dict:
     }
     
     n_rows = len(df)
-    numeric_cols = df.select_dtypes(include=["number"]).columns.tolist()
+    candidate_id_cols = set(heuristics.get("candidate_id_columns", []))
+    numeric_cols = [
+        col for col in df.select_dtypes(include=["number"]).columns.tolist()
+        if col not in candidate_id_cols
+    ]
     
     # ----- 1. Small Sample Detection -----
     if n_rows < 30:
@@ -129,22 +134,39 @@ def _compute_assumption_tests(df: pd.DataFrame, heuristics: dict) -> dict:
     
     # ----- 3. Homoscedasticity (Levene's Test) -----
     # Only meaningful if there's a grouping column and a numeric target
-    grouping_cols = heuristics.get("candidate_grouping_columns", [])
-    target_cols = heuristics.get("numeric_targets", [])
-    
+    grouping_cols = [
+        col for col in heuristics.get("candidate_grouping_columns", [])
+        if col not in candidate_id_cols
+    ]
+    target_cols = [
+        col for col in heuristics.get("numeric_targets", [])
+        if col not in candidate_id_cols
+    ]
+
     if grouping_cols and target_cols:
-        group_col = grouping_cols[0]
-        target_col = target_cols[0]
-        groups = [group_data[target_col].dropna().values 
-                  for _, group_data in df.groupby(group_col) 
-                  if len(group_data[target_col].dropna()) >= 2]
-        if len(groups) >= 2:
-            try:
-                stat, p_value = stats.levene(*groups)
-                if p_value < 0.05:
-                    assumptions["homoscedasticity_violated"] = True
-            except Exception:
-                pass
+        for group_col in grouping_cols:
+            for target_col in target_cols:
+                if group_col == target_col:
+                    continue
+
+                groups = [
+                    group_data[target_col].dropna().values
+                    for _, group_data in df.groupby(group_col)
+                    if len(group_data[target_col].dropna()) >= 2
+                ]
+                if len(groups) < 2:
+                    continue
+
+                try:
+                    stat, p_value = stats.levene(*groups)
+                    if p_value < 0.05:
+                        assumptions["homoscedasticity_violated"] = True
+                        break
+                except Exception:
+                    continue
+
+            if assumptions["homoscedasticity_violated"]:
+                break
     
     # ----- 4. Multicollinearity (VIF) -----
     if len(numeric_cols) >= 2:
@@ -154,13 +176,14 @@ def _compute_assumption_tests(df: pd.DataFrame, heuristics: dict) -> dict:
             if len(numeric_df) > len(numeric_cols):
                 # Add constant for VIF calculation
                 X = numeric_df.values
-                from numpy.linalg import inv
                 corr_matrix = np.corrcoef(X, rowvar=False)
                 # Check if any pair has |r| > 0.85
-                import numpy as np
                 for i in range(len(numeric_cols)):
                     for j in range(i + 1, len(numeric_cols)):
-                        if abs(corr_matrix[i, j]) > 0.85:
+                        corr_abs = abs(corr_matrix[i, j])
+                        # Round to the same precision used in reporting so borderline
+                        # cases near the threshold are classified consistently.
+                        if round(float(corr_abs), 2) >= 0.85:
                             assumptions["multicollinearity_detected"] = True
                             assumptions["high_vif_columns"].append(
                                 f"{numeric_cols[i]} <-> {numeric_cols[j]} (r={corr_matrix[i,j]:.2f})"

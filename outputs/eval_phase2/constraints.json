@@ -1,0 +1,44 @@
+{
+    "engine_type": "Deterministic Rule-Based Constraints",
+    "data_structure_read": {
+        "has_repeated_measures": true,
+        "has_independent_groups": true,
+        "has_binary_outcome": false,
+        "has_survival_data": false,
+        "is_hierarchical": false
+    },
+    "assumption_tests_read": {
+        "normality_violated": true,
+        "homoscedasticity_violated": false,
+        "multicollinearity_detected": false,
+        "small_sample": false,
+        "ordinal_outcome": false,
+        "zero_inflated": true
+    },
+    "allowed_methods": [
+        "Repeated Measures ANOVA",
+        "Linear Mixed-Effects Models (LMM)",
+        "Generalized Estimating Equations (GEE)",
+        "Paired / Dependent t-test",
+        "Wilcoxon signed-rank test",
+        "Independent group comparisons (e.g., test differences between groups)",
+        "Non-parametric alternatives (Mann-Whitney, Kruskal-Wallis, Spearman)",
+        "Data Transformation (log, sqrt, Box-Cox) before parametric tests",
+        "Zero-Inflated Poisson (ZIP) Regression",
+        "Zero-Inflated Negative Binomial (ZINB) Regression",
+        "Hurdle Model"
+    ],
+    "forbidden_methods": [
+        "Ordinary Least Squares (OLS) Linear Regression",
+        "Independent / Two-Sample t-test",
+        "One-way ANOVA (Independent)",
+        "Mann-Whitney U test",
+        "OLS Linear Regression (ignores count/zero-inflation structure)",
+        "Standard Poisson Regression (underestimates variance with zero-inflation)"
+    ],
+    "methodological_warnings": [
+        "[CRITICAL] Data contains repeated measures or dependent samples. Do not treat rows as independent observations. OLS is strictly forbidden.",
+        "WARNING: Shapiro-Wilk test detected non-normal distributions in: ['YearsAsCustomer', 'NumClaims']. Consider non-parametric alternatives or data transformations (log, Box-Cox) before using parametric tests.",
+        "CRITICAL: Zero-inflated count data detected in [{'column': 'NumClaims', 'zero_percentage': 70.3}]. Standard Poisson underestimates variance. Use Zero-Inflated Poisson/Negative Binomial or Hurdle models."
+    ]
+}

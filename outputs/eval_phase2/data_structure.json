@@ -1,0 +1,43 @@
+{
+    "dataset_summary": "This dataset contains information about insurance policies and their customers. Each row represents a policy and its associated customer data.",
+    "has_repeated_measures": true,
+    "has_independent_groups": true,
+    "has_binary_outcome": false,
+    "has_survival_data": false,
+    "is_hierarchical": false,
+    "identified_roles": {
+        "PolicyID": "ID",
+        "Age": "Continuous Target",
+        "YearsAsCustomer": "Continuous Target",
+        "NumClaims": "Grouping Variable"
+    },
+    "inferred_structure_notes": "The dataset does not contain any repeated measures or hierarchical structures. The 'NumClaims' column is likely used to group the data by customer, and the other columns are continuous targets.",
+    "assumption_tests": {
+        "normality_violations": [
+            {
+                "column": "YearsAsCustomer",
+                "shapiro_p": 0.0,
+                "verdict": "NON-NORMAL"
+            },
+            {
+                "column": "NumClaims",
+                "shapiro_p": 0.0,
+                "verdict": "NON-NORMAL"
+            }
+        ],
+        "homoscedasticity_violated": false,
+        "multicollinearity_detected": false,
+        "high_vif_columns": [],
+        "is_small_sample": false,
+        "has_ordinal_outcome": false,
+        "ordinal_columns": [],
+        "has_zero_inflation": true,
+        "zero_inflated_columns": [
+            {
+                "column": "NumClaims",
+                "zero_percentage": 70.3
+            }
+        ],
+        "sample_size": 300
+    }
+}

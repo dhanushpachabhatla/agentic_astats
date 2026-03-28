@@ -149,15 +149,15 @@ Added deterministic tests that run before the constraint engine:
 | Survival Data | `has_survival_data: true` | ✅ |
 | Hierarchical | `is_hierarchical: true` | ✅ |
 
-### Phase 2 — Assumption Edge Cases (In Progress)
+### Phase 2 — Assumption Edge Cases (5/5 ✅)
 
-| Dataset | Detection Target | Status |
-|---------|-----------------|--------|
-| Multicollinearity (Height/Weight/BMI) | `multicollinearity_detected` | 🔄 |
-| Non-Normal + Heteroscedastic | `normality_violated` | 🔄 |
-| Small Sample (n=20) | `small_sample` | 🔄 |
-| Ordinal Outcome (Likert 1-5) | `ordinal_outcome` | 🔄 |
-| Zero-Inflated Counts (60% zeros) | `zero_inflated` | 🔄 |
+| Dataset | Detection Target | Constraints Correct? |
+|---------|------------------|----------------------|
+| Multicollinearity (Height/Weight/BMI) | `multicollinearity_detected: true` | ✅ |
+| Non-Normal + Heteroscedastic | `normality_violated: true`, `homoscedasticity_violated: true` | ✅ |
+| Small Sample (n=20) | `small_sample: true` | ✅ |
+| Ordinal Outcome (Likert 1-5) | `ordinal_outcome: true` | ✅ |
+| Zero-Inflated Counts (60% zeros) | `zero_inflated: true` | ✅ |
 
 ## Quick Start
 
