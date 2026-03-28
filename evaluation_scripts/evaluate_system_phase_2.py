@@ -220,7 +220,7 @@ def execute_phase2():
     results = []
 
     for ev in PHASE2_EVALUATIONS:
-        print(f"\n{'─'*60}")
+        print(f"\n{'-' * 60}")
         print(f"Evaluating: {ev['name']}")
         print(f"  Description: {ev['description']}")
         csv_path = ev['generator']()
@@ -246,19 +246,19 @@ def execute_phase2():
             ) if ev["must_forbid"] else True
 
             overall = detection_pass and has_required and has_forbidden
-            status = "✅ PASS" if overall else "❌ FAIL"
+            status = "PASS" if overall else "FAIL"
 
             report = f"  [{status}] {ev['name']}\n"
-            report += f"    Detection ({ev['check_field']}): {'✅' if detection_pass else '❌'} (expected={ev['expected_value']}, got={detected})\n"
-            report += f"    Required Methods in Allowed: {'✅' if has_required else '❌'} (looked for: {ev['must_allow']})\n"
-            report += f"    Forbidden Methods in Forbidden: {'✅' if has_forbidden else '❌'} (looked for: {ev['must_forbid']})\n"
+            report += f"    Detection ({ev['check_field']}): {'PASS' if detection_pass else 'FAIL'} (expected={ev['expected_value']}, got={detected})\n"
+            report += f"    Required Methods in Allowed: {'PASS' if has_required else 'FAIL'} (looked for: {ev['must_allow']})\n"
+            report += f"    Forbidden Methods in Forbidden: {'PASS' if has_forbidden else 'FAIL'} (looked for: {ev['must_forbid']})\n"
 
             print(report)
             results.append((ev['name'], status, report))
 
         except Exception as e:
             import traceback
-            print(f"  ❌ [ERROR] Pipeline crashed: {e}")
+            print(f"  [ERROR] Pipeline crashed: {e}")
             traceback.print_exc()
             results.append((ev['name'], "ERROR", str(e)))
 
@@ -269,7 +269,7 @@ def execute_phase2():
     passed = sum(1 for _, s, _ in results if "PASS" in s)
     total = len(results)
     for name, status, _ in results:
-        print(f"  {status} — {name}")
+        print(f"  {status} - {name}")
     print(f"\nScore: {passed}/{total}")
     print("=" * 60)
 

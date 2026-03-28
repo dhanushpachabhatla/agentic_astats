@@ -7,11 +7,10 @@
     "is_hierarchical": false,
     "identified_roles": {
         "PolicyID": "ID",
-        "Age": "Continuous Target",
-        "YearsAsCustomer": "Continuous Target",
-        "NumClaims": "Grouping Variable"
+        "NumClaims": "Grouping Variable",
+        "Age": "Continuous Target"
     },
-    "inferred_structure_notes": "The dataset does not contain any repeated measures or hierarchical structures. The 'NumClaims' column is likely used to group the data by customer, and the other columns are continuous targets.",
+    "inferred_structure_notes": "The dataset does not contain any repeated measures or hierarchical structures. The 'NumClaims' column is likely used to group the data by policy, and the 'Age' column is likely a continuous target variable.",
     "assumption_tests": {
         "normality_violations": [
             {
